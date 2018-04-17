@@ -15,12 +15,6 @@ class Database {
 	Get an instance of the Database
 	@return Instance
 	*/
-	public static function getInstance() {
-		if(!self::$_instance) { // If no instance then make one
-			self::$_instance = new self();
-		}
-		return self::$_instance;
-	}
 
 	private function connect()
 	{
@@ -56,9 +50,6 @@ class Database {
 		}
 	}
 
-	public function prepare() {
-		//$this->pdo->prepare();
-	}
 
 	public static function Init()
 	{
@@ -74,48 +65,7 @@ class Database {
 	public function CloseConnection()
 	{
 		$this->pdo = null;
-	}
-
-	public function query($query, $params = null, $fetchmode = PDO::FETCH_ASSOC)
-	{
-		$query = trim($query);
-		$rawStatement = explode(" ", $query);
-		$this->Init($query, $params);
-		$statement = strtolower($rawStatement[0]);
-		if ($statement === 'select' || $statement === 'show') {
-			return $this->sQuery->fetchAll($fetchmode);
-		} elseif ($statement === 'insert' || $statement === 'update' || $statement === 'delete') {
-			return $this->sQuery->rowCount();
-		} else {
-			return NULL;
-		}
-	}
-	
-	
-	public function lastInsertId()
-	{
-		return $this->pdo->lastInsertId();
-	}
-
-	public function column($query, $params = null)
-	{
-		$this->Init($query, $params);
-		$resultColumn = $this->sQuery->fetchAll(PDO::FETCH_COLUMN);
-		$this->rowCount = $this->sQuery->rowCount();
-		$this->columnCount = $this->sQuery->columnCount();
-		$this->sQuery->closeCursor();
-		return $resultColumn;
-	}
-	public function row($query, $params = null, $fetchmode = PDO::FETCH_ASSOC)
-	{
-		$this->Init($query, $params);
-		$resultRow = $this->sQuery->fetch($fetchmode);
-		$this->rowCount = $this->sQuery->rowCount();
-		$this->columnCount = $this->sQuery->columnCount();
-		$this->sQuery->closeCursor();
-		return $resultRow;
-	}
-	
-
+	}	
+		
 }
 ?>
