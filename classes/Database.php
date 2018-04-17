@@ -8,6 +8,8 @@ class Database {
 	private $username = "root";
 	private $password = "root";
 	private $database = "breeze";
+	protected $bConnected = false;
+	public $pdo;
 	private $port = 3306;
 	/*
 	Get an instance of the Database
@@ -24,7 +26,7 @@ class Database {
 	{
 		try {
 			$this->pdo = new PDO('mysql:dbname=' . $this->database . ';host=' . $this->host . ';port=' . $this->port . ';charset=utf8', 
-				$this->user, 
+				$this->username, 
 				$this->password,
 				array(
 					//For PHP 5.3.6 or lower
@@ -54,37 +56,19 @@ class Database {
 		}
 	}
 
-	private function Init($query, $parameters = "")
+	public function prepare() {
+		//$this->pdo->prepare();
+	}
+
+	public static function Init()
 	{
-		if (!$this->bConnected) {
-			$this->Connect();
+		$dbh = new static;
+		if (!$dbh->bConnected) {
+			$dbh->Connect();
 		}
-		try {
-			$this->parameters = $parameters;
-			$this->sQuery     = $this->pdo->prepare($this->BuildParams($query, $this->parameters));
-			
-			if (!empty($this->parameters)) {
-				if (array_key_exists(0, $parameters)) {
-					$parametersType = true;
-					array_unshift($this->parameters, "");
-					unset($this->parameters[0]);
-				} else {
-					$parametersType = false;
-				}
-				foreach ($this->parameters as $column => $value) {
-					$this->sQuery->bindParam($parametersType ? intval($column) : ":" . $column, $this->parameters[$column]); //It would be query after loop end(before 'sQuery->execute()').It is wrong to use $value.
-				}
-			}
-			
-			$this->succes = $this->sQuery->execute();
-			$this->querycount++;
-		}
-		catch (PDOException $e) {
-			echo $this->ExceptionLog($e->getMessage(), $this->BuildParams($query));
-			die();
-		}
-		
-		$this->parameters = array();
+
+		return $dbh;
+
 	}
 
 	public function CloseConnection()
@@ -94,7 +78,7 @@ class Database {
 
 	public function query($query, $params = null, $fetchmode = PDO::FETCH_ASSOC)
 	{
-		$query        = trim($query);
+		$query = trim($query);
 		$rawStatement = explode(" ", $query);
 		$this->Init($query, $params);
 		$statement = strtolower($rawStatement[0]);
@@ -112,24 +96,26 @@ class Database {
 	{
 		return $this->pdo->lastInsertId();
 	}
+
+	public function column($query, $params = null)
+	{
+		$this->Init($query, $params);
+		$resultColumn = $this->sQuery->fetchAll(PDO::FETCH_COLUMN);
+		$this->rowCount = $this->sQuery->rowCount();
+		$this->columnCount = $this->sQuery->columnCount();
+		$this->sQuery->closeCursor();
+		return $resultColumn;
+	}
+	public function row($query, $params = null, $fetchmode = PDO::FETCH_ASSOC)
+	{
+		$this->Init($query, $params);
+		$resultRow = $this->sQuery->fetch($fetchmode);
+		$this->rowCount = $this->sQuery->rowCount();
+		$this->columnCount = $this->sQuery->columnCount();
+		$this->sQuery->closeCursor();
+		return $resultRow;
+	}
 	
-	// Constructor
-	// private function __construct() {
-	// 	$this->_connection = new mysqli($this->host, $this->username, $this->password, $this->database);
-	
-	// 	// Error handling
-	// 	if(mysqli_connect_error()) {
-	// 		trigger_error("Failed to conencto to MySQL: " . mysql_connect_error(),
-	// 			 E_USER_ERROR);
-	// 	}
-	// }
-	
-	// // Magic method clone is empty to prevent duplication of connection
-	// private function __clone() { }
-	
-	// // Get mysqli connection
-	// public function getConnection() {
-	// 	return $this->connection;
-	// }
+
 }
 ?>
