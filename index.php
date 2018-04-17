@@ -9,8 +9,10 @@ include 'includes/header.php';
 
 // Rest of the page comes here
 
-// $person = ['first_name'=>'seth', 'last_name'=>'atam', 'email_address'=>'seth@mg.com', 'group_id'=>'3', 'state'=>'active'];
-// $person = new Person($person);
+// $persons = ['id'=>13, 'first_name'=>'seth', 'last_name'=>'atam', 'email_address'=>'seth@mgfhgdfgh.com', 'group_id'=>'3', 'state'=>'active'];
+// $person = new Person($persons);
+// $person->findOrNew();
+// exit;
 // $person->Add();
 ?>
   <body>
@@ -19,12 +21,16 @@ include 'includes/header.php';
       <h5 class="my-0 mr-md-auto font-weight-normal">Breeze Test</h5>
     </div>
 
-    <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-      <h1 class="display-4">Church Membership</h1>
-
-      <!-- Church group table and membership will be displayed here -->
-     
-    </div>
+   <section class="jumbotron text-center">
+        <div class="container">
+          <h1 class="jumbotron-heading">Add or Update Groups and People</h1>
+          <p class="lead text-muted">Click any of the buttons to add People or Groups to your database</p>
+          <p>
+            <a href="#" class="btn btn-primary my-2" id="add-group">Add Groups</a>
+            <a href="#" class="btn btn-secondary my-2" id="add-people">Add People</a>
+          </p>
+        </div>
+      </section>
 
     <div class="container">
       
@@ -39,7 +45,25 @@ include 'includes/header.php';
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.4.0/dropzone.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+    	var addGroup = new Dropzone("a#add-group", { 
+    		url: "/file.php?type=group",
+    		success: function (file, response) {
+   				this.removeFile(file);
+   				console.log("File uploaded successfully");
+			}
+    	});
+
+    	var addPeople = new Dropzone("a#add-people", { 
+    		url: "/file.php?type=people",
+    		success: function (file, response) {
+   				this.removeFile(file);
+   				console.log("File uploaded successfully");
+			}
+    	});
+    </script>
   </body>
 </html>
 
