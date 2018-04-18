@@ -7,13 +7,6 @@ require_once 'classes/Group.php';
 
 include 'includes/header.php';
 
-// Rest of the page comes here
-
-// $persons = ['id'=>13, 'first_name'=>'seth', 'last_name'=>'atam', 'email_address'=>'seth@mgfhgdfgh.com', 'group_id'=>'3', 'state'=>'active'];
-// $person = new Person($persons);
-// $person->findOrNew();
-// exit;
-// $person->Add();
 ?>
   <body>
 
@@ -30,10 +23,14 @@ include 'includes/header.php';
             <a href="#" class="btn btn-secondary my-2" id="add-people">Add People</a>
           </p>
         </div>
-      </section>
+    </section>
 
     <div class="container">
-      
+      <section class="table-data">
+      	<div class="user-data">
+      		<?php include 'user_data.php'; ?>
+      	</div>
+      </section>
 
     <?php
 		include 'includes/footer.php';
@@ -46,23 +43,32 @@ include 'includes/header.php';
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.4.0/dropzone.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
+    
     <script type="text/javascript">
+
     	var addGroup = new Dropzone("a#add-group", { 
-    		url: "/file.php?type=group",
+    		url: "/file.php?type=groups",
+    		acceptedFiles: 'text/csv',
+    		paramName: 'uploadFile',
     		success: function (file, response) {
    				this.removeFile(file);
-   				console.log("File uploaded successfully");
-			}
+   				$('.user-data').html(response)
+			}	
     	});
 
     	var addPeople = new Dropzone("a#add-people", { 
     		url: "/file.php?type=people",
+    		acceptedFiles: 'text/csv',
+    		paramName: 'uploadFile',
     		success: function (file, response) {
    				this.removeFile(file);
-   				console.log("File uploaded successfully");
-			}
+   				$('.user-data').html(response)
+			 }
     	});
+
     </script>
   </body>
 </html>

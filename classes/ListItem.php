@@ -1,10 +1,10 @@
 <?php
 
+require_once 'Database.php';
 abstract class ListItem implements arrayaccess{
 
-	// protected $db_table;
-	protected $id;
-	// protected $result;
+	//protected $db_table;
+	protected $result;
 
 	public function __construct($memberArray =array(), $load=false) {
 		if(is_array($memberArray)) {
@@ -16,10 +16,11 @@ abstract class ListItem implements arrayaccess{
 				$this->$key = $memberArray[$key];
 			}
 		}else{
-			$this->id = $memberArray;
+			$this->{$this->id_alias} = $memberArray;
 		}
 
-		if($load && isset($this->id)) {
+
+		if($load && isset($this->{$this->id_alias})) {
 			$this->load();
 		}
 	}
@@ -31,10 +32,10 @@ abstract class ListItem implements arrayaccess{
 
 	public function load($id_only = false){
   
-        $query = "SELECT * FROM $this->db_table where {$this->id_alias} = ?";
+        $query = "SELECT * FROM $this->db_table where $this->id_alias = ?";
         $dbh = Database::Init();
         $sth = $dbh->pdo->prepare($query);
-        $sth->execute([$this->id]);
+        $sth->execute([$this->{$this->id_alias}]);
         $result = $sth->fetchAll();
 		if ( count( $result ) === 1 ) {
 			if($id_only) return true;
@@ -49,7 +50,7 @@ abstract class ListItem implements arrayaccess{
         return false;
     }
 
-    public function findOrNew() {
+    public function firstOrNew() {
     	if($this->load(true)) {
     		$this->Update(true);
     	}else{
@@ -115,8 +116,8 @@ abstract class ListItem implements arrayaccess{
 
 		//remove trailing comma from query
 		$query = substr( $query, -0, (strlen( $query ) -2 ) );
-		$query .= ' WHERE id = ?';
-		$prepared_params[] = $this->id;
+		$query .= ' WHERE ' . $this->id_alias. ' = ?';
+		$prepared_params[] = $this->{$this->id_alias};
 		$dbh = Database::Init();
 		$sth = $dbh->pdo->prepare($query);
 		if( $sth->execute($prepared_params) ){
