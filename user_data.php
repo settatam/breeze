@@ -16,7 +16,7 @@ if(count($persons) < 1) { ?>
 	
 <? } else { ?>
 
-<table class="table">
+<table class="table" id="sortable">
   <thead>
     <tr>
       <th scope="col">Person ID</th>
@@ -40,8 +40,15 @@ if(count($persons) < 1) { ?>
       <td> <?=$person['state'] ?></td>
     </tr>
   
-  <? } ?>
-    
-    
+  <? } } ?>
+</tbody>
+       
 </table>
+
+<script type="text/javascript">
+
+      $( function() {
+        $( "tbody" ).sortable();
+      });
+  </script>
 
