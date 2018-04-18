@@ -18,7 +18,6 @@ if(verifyCSVFile($_FILES["uploadFile"]["name"])) {
 	if (($handle = fopen($target_file, "r")) !== FALSE) {
 	    while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
 	    	if($row == 1) {
-	    		var_dump($data);
 	    		if(checkValidHeader($data, $type))  {
 	    			$heading = $data;
 	    		}else{
@@ -29,7 +28,13 @@ if(verifyCSVFile($_FILES["uploadFile"]["name"])) {
 	    	}else{
 	    		$input = processData($heading, $data);
 	    		$object = $type == "groups" ? new Group($input) : new Person($input);	    		
-	    		$object->firstOrNew($input);
+	    		if($object->firstOrNew($input)) {
+
+	    			//Successful enrty
+	    		}else{
+	    			//Log Failure
+	    			$error[] = "Insert was not successful";
+	    		}
 	    	}
 	        
 	        $num = count($data);

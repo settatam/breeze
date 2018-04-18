@@ -51,6 +51,7 @@ abstract class ListItem implements arrayaccess{
     }
 
     public function firstOrNew() {
+    	if(!checkInteger($this->{$this->id_alias})) return false;
     	if($this->load(true)) {
     		$this->Update(true);
     	}else{
@@ -60,7 +61,7 @@ abstract class ListItem implements arrayaccess{
 
     //inserts a new row into the database
 	public function Add() {
-	
+		
 		$param_count = 0;
 		$prepared_params = array();
 		$query = "INSERT INTO $this->db_table( ";
